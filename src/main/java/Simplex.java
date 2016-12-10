@@ -1,3 +1,5 @@
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,9 +25,11 @@ public class Simplex {
         result = new Double[equationMembers.length];
 
         for (String equationMember : equationMembers) {
-            Matcher memberMatcher = Pattern.compile("(\\d+)(x)(\\d+)").matcher(equationMember);
+            Matcher memberMatcher = Pattern.compile("(\\d?)(x)(\\d+)").matcher(equationMember);
             if (memberMatcher.find()) {
-                Double memberCoefficient = Double.parseDouble(memberMatcher.group(1));
+                String parsedMemberCoefficient = memberMatcher.group(1);
+                Double memberCoefficient = StringUtils.isEmpty(parsedMemberCoefficient)
+                        ? 1.0d : Double.parseDouble(parsedMemberCoefficient);
                 int memberXIndex = Integer.parseInt(memberMatcher.group(3));
                 result[memberXIndex - 1] = memberCoefficient;
             } else {
@@ -83,7 +87,7 @@ public class Simplex {
 
         Double[] aimFunc = {3.0,2.0};
 
-        String targetFunction = "3x1 + 2x2 -> max";
+        String targetFunction = "x1 + 2x2 -> max";
         Double[] asd = getTargetFunctionCoefitients(targetFunction);
         List<String> restrictions = new ArrayList<String>(Arrays.asList(
                 "x1 -  6x2 <= 3",
