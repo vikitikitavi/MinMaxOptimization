@@ -1,44 +1,12 @@
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import static util.InputParsingUtils.getRestrictionElements;
+import static util.InputParsingUtils.getTargetFunctionCoefitients;
 
 /**
  * Created by tori on 009 09.12.16.
  */
 public class Simplex {
-
-    public static Double[] getTargetFunctionCoefitients(String targetFunction) {
-        final String errorMsg = "Wrong input, please use 'Ax1 + Bx2 + ... + NxN -> max' format";
-
-        String[] equationMembers;
-        Double[] result;
-
-        Matcher matcher = Pattern.compile("(.*?)(\\-\\>)(.*)").matcher(targetFunction);
-        if (matcher.find()) {
-            equationMembers = matcher.group(1).trim().split(" \\+ ");
-        } else {
-            throw new IllegalStateException(errorMsg);
-        }
-
-        result = new Double[equationMembers.length];
-
-        for (String equationMember : equationMembers) {
-            Matcher memberMatcher = Pattern.compile("(\\d?)(x)(\\d+)").matcher(equationMember);
-            if (memberMatcher.find()) {
-                String parsedMemberCoefficient = memberMatcher.group(1);
-                Double memberCoefficient = StringUtils.isEmpty(parsedMemberCoefficient)
-                        ? 1.0d : Double.parseDouble(parsedMemberCoefficient);
-                int memberXIndex = Integer.parseInt(memberMatcher.group(3));
-                result[memberXIndex - 1] = memberCoefficient;
-            } else {
-                throw new IllegalStateException(errorMsg);
-            }
-        }
-
-        return result;
-    }
 
     public static void main(String[] args) {
 
@@ -90,12 +58,14 @@ public class Simplex {
         String targetFunction = "x1 + 2x2 -> max";
         Double[] asd = getTargetFunctionCoefitients(targetFunction);
         List<String> restrictions = new ArrayList<String>(Arrays.asList(
-                "x1 -  6x2 <= 3",
+                "-2.3x1 + x2 <= 1",
+                "x1 - 6x2 <= 3",
                 "x1 + x2 <= 10",
-                "-2x1 + x2 <= 1",
                 "x2 <= 11",
                 "2x1 + x2 <= 32"
         ));
+
+        getRestrictionElements(restrictions);
 
         Double[][] table ={{0.0, 3.0, 1.0, -6.0},{0.0, 10.0, 1.0, 1.0},{0.0, 1.0, -2.0, 1.0},{0.0, 11.0, 0.0, 1.0},{0.0, 0.0, 0.0, 0.0}};
         NormalView n = new NormalView(aimFunc, table);
