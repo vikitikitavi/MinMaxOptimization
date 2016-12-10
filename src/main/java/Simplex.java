@@ -1,10 +1,43 @@
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by tori on 009 09.12.16.
  */
 public class Simplex {
+
+    public static Double[] getTargetFunctionCoefitients(String targetFunction) {
+        final String errorMsg = "Wrong input, please use 'Ax1 + Bx2 + ... + NxN -> max' format";
+
+        String[] equationMembers;
+        Double[] result;
+
+        Matcher matcher = Pattern.compile("(.*?)(\\-\\>)(.*)").matcher(targetFunction);
+        if (matcher.find()) {
+            equationMembers = matcher.group(1).trim().split(" \\+ ");
+        } else {
+            throw new IllegalStateException(errorMsg);
+        }
+
+        result = new Double[equationMembers.length];
+
+        for (String equationMember : equationMembers) {
+            Matcher memberMatcher = Pattern.compile("(\\d+)(x)(\\d+)").matcher(equationMember);
+            if (memberMatcher.find()) {
+                Double memberCoefficient = Double.parseDouble(memberMatcher.group(1));
+                int memberXIndex = Integer.parseInt(memberMatcher.group(3));
+                result[memberXIndex - 1] = memberCoefficient;
+            } else {
+                throw new IllegalStateException(errorMsg);
+            }
+        }
+
+        return result;
+    }
+
     public static void main(String[] args) {
+
         Double[][] table1 = {{0.0, 54.0, 21.0, 4.0, 3.0, 1.0, 0.0, 0.0, 0.0},
                 {0.0, 5.0, 76.0, 3.0, -7.0, 0.0, 1.0, 0.0, 0.0},
                 {0.0, 65.0, 76.0, 32.0, 66.0, 0.0, 0.0, 1.0, 0.0},
@@ -40,7 +73,7 @@ public class Simplex {
         simple.changeBasis("x4",0);
         String element = simple.mainColumnMax();
         System.out.println(simple.basis[0]+simple.basis[1]+simple.basis[2]+simple.basis[3]);
-        while (element.equals("") == false){
+        while (!element.equals("")){
             Integer base = simple.elementInBasisToChange(element);
             simple.changeBasis(element, base);
             element = simple.mainColumnMax();
@@ -49,6 +82,17 @@ public class Simplex {
 
 
         Double[] aimFunc = {3.0,2.0};
+
+        String targetFunction = "3x1 + 2x2 -> max";
+        Double[] asd = getTargetFunctionCoefitients(targetFunction);
+        List<String> restrictions = new ArrayList<String>(Arrays.asList(
+                "x1 -  6x2 <= 3",
+                "x1 + x2 <= 10",
+                "-2x1 + x2 <= 1",
+                "x2 <= 11",
+                "2x1 + x2 <= 32"
+        ));
+
         Double[][] table ={{0.0, 3.0, 1.0, -6.0},{0.0, 10.0, 1.0, 1.0},{0.0, 1.0, -2.0, 1.0},{0.0, 11.0, 0.0, 1.0},{0.0, 0.0, 0.0, 0.0}};
         NormalView n = new NormalView(aimFunc, table);
         Double[][] a = n.getNormalRestrictionsCoefs();
