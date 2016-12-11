@@ -14,13 +14,14 @@ public class InputParsingUtils {
             "Wrong input, please use 'Ax1 +/- Bx2 +/- ... +/- NxN <=/>= C' format";
     private static final String TARGET_FUNCTION_FORMAT_ERR_MSG =
             "Wrong input, please use 'Ax1 +/- Bx2 +/- ... +/- NxN -> max' format";
+
     private static final String OPTIONAL_NUMBER_REGEX = "(-?\\d?)";
     private static final String GREEDY_NUMBER_REGEX = "(\\d+)";
     private static final String EQUATION_MEMBER_REGEX = OPTIONAL_NUMBER_REGEX + "(x)" + GREEDY_NUMBER_REGEX;
-
     private static final String EQUATION_MEMBER_PARSE_REGEX = "(-?\\d?\\.?\\d?)x([\\d+])";
     private static final String EQUATION_MEMBER_GET_REGEX = "(\\W?-?\\W?\\d?\\.?\\d?x\\d+)";
     private static final String RESTRICTION_PARTS_PARSE_REGEX = "(.*[^<>=])([<>=]+\\W?)(.*)";
+
     private static final int RESTRICTION_MEMBER_GROUP = 1;
     private static final int RESTRICTION_INEQUALITY_SIGN_GROUP = 2;
     private static final int RESTRICTION_FREE_COEFFICIENT_GROUP = 3;
