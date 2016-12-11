@@ -11,13 +11,15 @@ public class NormalView {
     private LinkedList<String> basis = new LinkedList<String>();
     private Map<String, Double> normalAimFunction = new HashMap<String, Double>();
     private Double[][] normalRestrictionsCoefs;
+    LinkedList<String> inequality = new LinkedList<String>();
 
-    NormalView(Double[] aimFunction, Double[][] restrictionsCoefs){
+    NormalView(Double[] aimFunction, Double[][] restrictionsCoefs, LinkedList<String> inequality) {
+        this.inequality = inequality;
         normalAimFunction.put("01", 0.0);
         normalAimFunction.put("02", 0.0);
         variables.add("01");
         variables.add("02");
-        for(int index = 0; index < aimFunction.length; index++) {
+        for (int index = 0; index < aimFunction.length; index++) {
             normalAimFunction.put("x" + (index + 1), aimFunction[index]);
             variables.add("x" + (index + 1));
         }
@@ -25,69 +27,71 @@ public class NormalView {
         setNormalRestrictionsCoefs();
     }
 
-    public LinkedList<String> getBasis(){
-        return basis;
+    public String[] getBasis() {
+        String[] base = new String[basis.size()];
+        for(int index = 0; index<base.length; index++)
+            base[index] = basis.get(index);
+        return base;
     }
 
-    public Double[][] getNormalRestrictionsCoefs(){
+    public Double[][] getNormalRestrictionsCoefs() {
         return normalRestrictionsCoefs;
     }
 
-    public LinkedList<String> getVariables(){
+    public LinkedList<String> getVariables() {
         return variables;
     }
 
-    public  Map<String, Double> getNormalAimFunction(){
+    public Map<String, Double> getNormalAimFunction() {
         return normalAimFunction;
     }
 
-    private void setNormalRestrictionsCoefs(){
-        normalRestrictionsCoefs = new Double[restrictionsCoefs.length][restrictionsCoefs[0].length + restrictionsCoefs.length - 1];
-        for(int column = 0; column < restrictionsCoefs[0].length; column++)
+    private void setNormalRestrictionsCoefs() {
+
+        int oneMoreVariable = 0;
+        for (String element : inequality) {
+            if (element.equals(">="))
+                oneMoreVariable++;
+        }
+
+        normalRestrictionsCoefs = new Double[restrictionsCoefs.length][restrictionsCoefs[0].length + restrictionsCoefs.length + oneMoreVariable - 1];
+        for (int column = 0; column < restrictionsCoefs[0].length; column++)
             for (int string = 0; string < restrictionsCoefs.length; string++)
                 normalRestrictionsCoefs[string][column] = restrictionsCoefs[string][column];
-        for(int column = restrictionsCoefs[0].length; column < normalRestrictionsCoefs[0].length; column++)
+
+        int column = restrictionsCoefs[0].length;
+        for (int index = 0; index < inequality.size(); index++) {
+            if (inequality.get(index).equals(">=")) {
                 for (int string = 0; string < normalRestrictionsCoefs.length; string++)
-                    if(column - restrictionsCoefs[0].length == string) {
+                    if (string == index) {
+                        normalRestrictionsCoefs[string][column] = -1.0;
+                        variables.add("x" + (column - 1));
+                        normalAimFunction.put("x" + (column - 1), 0.0);
+                    } else normalRestrictionsCoefs[string][column] = 0.0;
+                column++;
+                for (int string = 0; string < normalRestrictionsCoefs.length; string++)
+                    if (string == index) {
                         normalRestrictionsCoefs[string][column] = 1.0;
-                        basis.add("x"+ (column - 1));
-                        variables.add("x" +(column - 1));
-                        normalAimFunction.put("x"+ (column - 1), 0.0);
-                    }
-                else  normalRestrictionsCoefs[string][column] = 0.0;
+                        basis.add("-M" + (column - 1));
+                        variables.add("-M" + (column - 1));
+                        normalAimFunction.put("-M" + (column - 1), Double.MIN_VALUE);
+                    } else normalRestrictionsCoefs[string][column] = 0.0;
+
+            } else for (int string = 0; string < normalRestrictionsCoefs.length; string++)
+                if (index == string) {
+                    normalRestrictionsCoefs[string][column] = 1.0;
+                    basis.add("x" + (column - 1));
+                    variables.add("x" + (column - 1));
+                    normalAimFunction.put("x" + (column - 1), 0.0);
+                } else normalRestrictionsCoefs[string][column] = 0.0;
+
+            column++;
+
+        }
+
+        for (int index = 0; index < basis.size(); index++) {
+            normalRestrictionsCoefs[index][0] = normalAimFunction.get(basis.get(index));
+        }
     }
 
-//    private Double[] toNormalRestrictionCoefs(){
-//        for (int colunn = 0; colunn < restrictionsCoefs[0].length; colunn++) {
-//            int counter = 0;
-//            int index = -1;
-//             for(int string = 0; string < restrictionsCoefs.length; string++)
-//             {
-//                if (restrictionsCoefs[string][colunn] != 0)
-//                    counter++;
-//                    index = string;
-//             }
-//            if(counter == 1) {
-//                Double divider = restrictionsCoefs[index][colunn];
-//                for (int column = 0; column < restrictionsCoefs[0].length; column++)
-//                    restrictionsCoefs[index][column] = restrictionsCoefs[index][column]/divider;
-//                basis.add("x"+index);
-//            }
-//        }
-//
-//        normalRestrictionsCoefs = new Double[restrictionsCoefs.length + restrictionsCoefs.length - basis.size()][restrictionsCoefs[0].length];
-//        for(int column = 0; column < restrictionsCoefs[0].length; column++)
-//            for (int string = 0; string < restrictionsCoefs.length; string++)
-//                normalRestrictionsCoefs[string][column] = restrictionsCoefs[string][column];
-//
-//        if(basis.size() != restrictionsCoefs.length){
-//            for(int column = restrictionsCoefs[0].length; column < normalRestrictionsCoefs[0].length; column++)
-//                for (int string = restrictionsCoefs.length; string < normalRestrictionsCoefs.length; string++)
-//                    normalRestrictionsCoefs[string][column] = 0.0;
-//        }
-//        for(String elements : basis)
-//
-//
-//
-//    }
 }
