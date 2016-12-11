@@ -84,6 +84,17 @@ public class InputParsingUtils {
         return resultList.toArray(result);
     }
 
+    public static LinkedList<String> getInEqualityStates(final List<String> restrictions) {
+        List<RestrictionEquation> restrictionEquations = new ArrayList<RestrictionEquation>();
+        LinkedList<String> result = new LinkedList<String>();
+
+        for (String restriction : restrictions) {
+            result.add(getRestrictionPart(restriction, RESTRICTION_INEQUALITY_SIGN_GROUP).trim());
+        }
+
+        return result;
+    }
+
     private static RestrictionEquation toRestrictionEquation(final String restriction) {
         RestrictionEquation restrictionEquation = new RestrictionEquation();
 
