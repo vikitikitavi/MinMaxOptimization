@@ -68,7 +68,7 @@ public class InputParsingUtils {
         int vectorSize = getVectorSizeByEquationsMaxIndex(restrictionEquations);
 
         if (vectorSize < 1 ) {
-            throw new IllegalStateException("Vector size can not be less than 1. Dobule check your restrictions please");
+            throw new IllegalStateException("Vector size can not be less than 1. Double check your restrictions please");
         }
 
         for (RestrictionEquation restrictionEquation : restrictionEquations) {
