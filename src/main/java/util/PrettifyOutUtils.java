@@ -46,7 +46,6 @@ public class PrettifyOutUtils {
         at.addRule();
         at.addRow(headersArr);
         at.addRule();
-        at.getTable().get(0);
 
         for (int i = 0; i < simplexTable.table.length - 1; i++) {
             List<String> row = new ArrayList<String>();
@@ -91,13 +90,10 @@ public class PrettifyOutUtils {
         at.addRow(deltaRowArr);
         at.addRule();
 
-        int i = 0;
-
         V2_AsciiTableRenderer rend = new V2_AsciiTableRenderer();
         rend.setTheme(V2_E_TableThemes.PLAIN_7BIT.get());
         rend.setWidth(new WidthLongestLine());
         RenderedTable rt = rend.render(at);
-
 
         System.out.println(rt);
     }
