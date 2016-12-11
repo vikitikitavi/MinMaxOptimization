@@ -1,3 +1,5 @@
+package kurs;
+
 import java.util.*;
 
 import static util.InputParsingUtils.getTargetFunctionCoefficients;
