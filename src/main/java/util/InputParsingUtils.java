@@ -62,19 +62,7 @@ public class InputParsingUtils {
         List<Double[]> resultList = new ArrayList<Double[]>();
 
         for (String restriction : restrictions) {
-            RestrictionEquation restrictionEquation = new RestrictionEquation();
-
-            restrictionEquation.setFreeCoefficient(
-                    Double.parseDouble(getRestrictionPart(restriction, RESTRICTION_FREE_COEFFICIENT_GROUP).trim()));
-            restrictionEquation.setInequaltityDirectionPositive(
-                    getRestrictionPart(restriction, RESTRICTION_INEQUALITY_SIGN_GROUP).contains(">"));
-
-            final String equationMemberPart = getRestrictionPart(restriction, RESTRICTION_MEMBER_GROUP);
-            for (String equationMemberCandidate : getEquationMemberCandidates(equationMemberPart)) {
-                restrictionEquation.addEquationMember(toEquationMember(equationMemberCandidate));
-            }
-
-            restrictionEquations.add(restrictionEquation);
+            restrictionEquations.add(toRestrictionEquation(restriction));
         }
 
         int vectorSize = getVectorSizeByEquationsMaxIndex(restrictionEquations);
@@ -84,7 +72,7 @@ public class InputParsingUtils {
         }
 
         for (RestrictionEquation restrictionEquation : restrictionEquations) {
-            resultList.add(getEquationResultTransformed(vectorSize, restrictionEquation));
+            resultList.add(transformToResultArray(vectorSize, restrictionEquation));
         }
 
         Double[] redundantZeroFilledResultPart = new Double[vectorSize + 2];
@@ -95,7 +83,22 @@ public class InputParsingUtils {
         return resultList.toArray(result);
     }
 
-    private static Double[] getEquationResultTransformed(final int vectorSize, final RestrictionEquation equation) {
+    private static RestrictionEquation toRestrictionEquation(String restriction) {
+        RestrictionEquation restrictionEquation = new RestrictionEquation();
+
+        restrictionEquation.setFreeCoefficient(
+                Double.parseDouble(getRestrictionPart(restriction, RESTRICTION_FREE_COEFFICIENT_GROUP).trim()));
+        restrictionEquation.setInequaltityDirectionPositive(
+                getRestrictionPart(restriction, RESTRICTION_INEQUALITY_SIGN_GROUP).contains(">"));
+
+        final String equationMemberPart = getRestrictionPart(restriction, RESTRICTION_MEMBER_GROUP);
+        for (String equationMemberCandidate : getEquationMemberCandidates(equationMemberPart)) {
+            restrictionEquation.addEquationMember(toEquationMember(equationMemberCandidate));
+        }
+        return restrictionEquation;
+    }
+
+    private static Double[] transformToResultArray(final int vectorSize, final RestrictionEquation equation) {
         Double[] equationResult = new Double[vectorSize + 2];
         equationResult[0] = 0.0d;
         equationResult[1] = equation.getFreeCoefficient();
