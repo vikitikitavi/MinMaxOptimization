@@ -20,11 +20,13 @@ public class InputParsingUtils {
     private static final String EQUATION_MEMBER_GET_REGEX = "(\\W?-?\\W?\\d?\\.?\\d?x\\d+)";
     private static final String RESTRICTION_PARTS_PARSE_REGEX = "(.*[^<>=])([<>=]+\\W?)(.*)";
     private static final String TARGET_FUNCTION_PARTS_PARSE_REGEX = "(.*)\\W?->\\W?.*";
+    private static final String MINUS_ONE_COEFFICIENT_PATTERN = "-";
 
     private static final int RESTRICTION_MEMBER_GROUP = 1;
     private static final int RESTRICTION_INEQUALITY_SIGN_GROUP = 2;
     private static final int RESTRICTION_FREE_COEFFICIENT_GROUP = 3;
     private static final double DEFAULT_ABSENT_COEFFICIENT_FOR_MEMBER  = 1.0d;
+    private static final double DEFAULT_NEGATIVE_ABSENT_COEFFICIENT_FOR_MEMBER  = -1.0d;
     private static final double DEFAULT_ABSENT_MEMBER_COEFFICIENT = 0.0d;
 
     public static Double[] getTargetFunctionCoefficients(final String targetFunction) {
@@ -126,11 +128,13 @@ public class InputParsingUtils {
         final Matcher memberParserMatcher = Pattern.compile(EQUATION_MEMBER_PARSE_REGEX)
                 .matcher(equationMemberCandidate.replaceAll(" ", "").replace("+", ""));
         if (memberParserMatcher.find()) {
-            em = new EquationMember(
-                    StringUtils.isEmpty(memberParserMatcher.group(1))
-                            ? DEFAULT_ABSENT_COEFFICIENT_FOR_MEMBER
-                            : Double.parseDouble(memberParserMatcher.group(1)),
-                    Integer.parseInt(memberParserMatcher.group(2)));
+            Double coefficient = DEFAULT_ABSENT_COEFFICIENT_FOR_MEMBER;
+            if (!StringUtils.isEmpty(memberParserMatcher.group(1))) {
+                coefficient = Double.parseDouble(memberParserMatcher.group(1));
+            } else if (memberParserMatcher.group(1).equals(MINUS_ONE_COEFFICIENT_PATTERN)) {
+                coefficient = DEFAULT_NEGATIVE_ABSENT_COEFFICIENT_FOR_MEMBER;
+            }
+            em = new EquationMember(coefficient, Integer.parseInt(memberParserMatcher.group(2)));
         } else {
             throw new IllegalStateException("Unable to parse equation member: " + equationMemberCandidate);
         }
