@@ -1,7 +1,7 @@
 import java.util.*;
 
 import static util.InputParsingUtils.getRestrictionElements;
-import static util.InputParsingUtils.getTargetFunctionCoefitients;
+import static util.InputParsingUtils.getTargetFunctionCoefficients;
 
 /**
  * Created by tori on 009 09.12.16.
@@ -56,7 +56,7 @@ public class Simplex {
         Double[] aimFunc = {3.0,2.0};
 
         String targetFunction = "x1 + 2x2 -> max";
-        Double[] asd = getTargetFunctionCoefitients(targetFunction);
+        Double[] asd = getTargetFunctionCoefficients(targetFunction);
         List<String> restrictions = new ArrayList<String>(Arrays.asList(
                 "-2.3x1 + x2 <= 1",
                 "x1 - 6x2 <= 3",
