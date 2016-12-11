@@ -65,23 +65,37 @@ public class Simplex {
         aimFunk.put("x6",0.0);
         aimFunk.put("x7",0.0);
 
-        SimplexTable simple = new SimplexTable();
-        simple.table = table1;
-        simple.basis = basis1;
-        simple.aimFunk=aimFunk;
-        simple.valuesName =valueseName1;
-        simple.changeBasis("x4",0);
-        String element = simple.mainColumnMax();
-        System.out.println(simple.basis[0]+simple.basis[1]+simple.basis[2]+simple.basis[3]);
-        while (!element.equals("")){
-            Integer base = simple.elementInBasisToChange(element);
-            simple.changeBasis(element, base);
-            element = simple.mainColumnMax();
-            System.out.println(simple.basis[0]+simple.basis[1]+simple.basis[2]+simple.basis[3]);
-        }
+//        simple.table = table1;
+//        simple.basis = basis1;
+//        simple.aimFunk=aimFunk;
+//        simple.valuesName =valueseName1;
+//        simple.changeBasis("x4",0);
+//        String element = simple.mainColumnMax();
+//        System.out.println(simple.basis[0]+simple.basis[1]+simple.basis[2]+simple.basis[3]);
+//        while (!element.equals("")){
+//            Integer base = simple.elementInBasisToChange(element);
+//            simple.changeBasis(element, base);
+//            element = simple.mainColumnMax();
+//            System.out.println(simple.basis[0]+simple.basis[1]+simple.basis[2]+simple.basis[3]);
+//        }
+//        System.out.println(table1[4][1]);
+//        System.out.println(table1[3][1]);
+//        System.out.println(table1[2][1]);
+//        System.out.println(table1[1][1]);
+//        System.out.println(table1[0][1]);
+//        System.out.println(table1[4][6]);
+//        System.out.println(table1[4][7]);
+//        System.out.println();
+//        System.out.println(simple.delta[0][1]+"   ");
+//        System.out.println(simple.delta[0][2]+"   ");
+//        System.out.println(simple.delta[0][3]+"    ");
+//        System.out.println(simple.delta[0][4] + "   ");
+//        System.out.println(simple.delta[0][5]);
+//        System.out.println(simple.delta[0][6]);
+//        System.out.println(simple.delta[0][7]);
+//        System.out.println(simple.delta[0][8]);
 
-
-        Double[] aimFunc = {3.0,2.0};
+        Double[] aimFunc = {7.0, 3.0};
 
         String targetFunction = "3x1 + 2x2 -> max";
         Double[] asd = getTargetFunctionCoefitients(targetFunction);
@@ -93,24 +107,15 @@ public class Simplex {
                 "2x1 + x2 <= 32"
         ));
 
-        Double[][] table ={{0.0, 3.0, 1.0, -6.0},{0.0, 10.0, 1.0, 1.0},{0.0, 1.0, -2.0, 1.0},{0.0, 11.0, 0.0, 1.0},{0.0, 0.0, 0.0, 0.0}};
-        NormalView n = new NormalView(aimFunc, table);
-        Double[][] a = n.getNormalRestrictionsCoefs();
-        for(int string = 0; string < a.length; string++) {
-            for (int column = 0; column < a[0].length; column++) {
-                System.out.print(a[string][column]+" ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-        LinkedList<String> a2 = n.getBasis();
-        System.out.println(a2+" ");
+        //Double[][] table ={{0.0, 54.0, 21.0, 4.0, 3.0},{0.0, 5.0, 76.0, 3.0, -7.0},{0.0, 65.0, 76.0, 32.0, 66.0},{0.0, 2.0, 43.0, 5.0, -100.0},{0.0, 0.0, 0.0, 0.0, 0.0}};
+        Double[][] table = {{0.0,5.0,65.0,1.0},{0.0, 6.0, 7.0, 8.0},{0.0, 0.0, 0.0, 0.0}};
+        LinkedList<String> eq = new LinkedList<String>();
+        eq.add(">=");
+        eq.add("<=");
+//        eq.add("<=");
+//        eq.add(">=");
 
-        System.out.println();
-        LinkedList<String> a3 = n.getVariables();
-        System.out.println(a3+" ");
-        Map<String, Double> a4 = n.getNormalAimFunction();
-        System.out.println(a4);
-
+        Double max = SimplexMaxMin.findMax(aimFunc, table, eq);
+        System.out.println(max);
     }
 }
