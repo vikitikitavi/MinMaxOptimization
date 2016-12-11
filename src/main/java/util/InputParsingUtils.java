@@ -10,8 +10,10 @@ import java.util.regex.Pattern;
 
 public class InputParsingUtils {
 
-    private static final String RESTRICTION_FORMAT_ERR_MSG
-            = "Wrong input, please use 'Ax1 + Bx2 + ... + NxN <=/>= C' format";
+    private static final String RESTRICTION_FORMAT_ERR_MSG =
+            "Wrong input, please use 'Ax1 +/- Bx2 +/- ... +/- NxN <=/>= C' format";
+    private static final String TARGET_FUNCTION_FORMAT_ERR_MSG =
+            "Wrong input, please use 'Ax1 +/- Bx2 +/- ... +/- NxN -> max' format";
     private static final String OPTIONAL_NUMBER_REGEX = "(-?\\d?)";
     private static final String GREEDY_NUMBER_REGEX = "(\\d+)";
     private static final String EQUATION_MEMBER_REGEX = OPTIONAL_NUMBER_REGEX + "(x)" + GREEDY_NUMBER_REGEX;
@@ -26,8 +28,6 @@ public class InputParsingUtils {
     private static final double DEFAULT_ABSENT_MEMBER_COEFFICIENT = 0.0d;
 
     public static Double[] getTargetFunctionCoefficients(final String targetFunction) {
-        final String errorMsg = "Wrong input, please use 'Ax1 + Bx2 + ... + NxN -> max' format";
-
         String[] equationMembers;
         Double[] result;
         final Matcher functionMatcher = Pattern.compile("(.*?)(->)(.*)").matcher(targetFunction);
@@ -35,7 +35,7 @@ public class InputParsingUtils {
         if (functionMatcher.find()) {
             equationMembers = functionMatcher.group(1).trim().split(" \\+ ");
         } else {
-            throw new IllegalStateException(errorMsg);
+            throw new IllegalStateException(TARGET_FUNCTION_FORMAT_ERR_MSG);
         }
 
         result = new Double[equationMembers.length];
@@ -49,7 +49,7 @@ public class InputParsingUtils {
                 final int memberXIndex = Integer.parseInt(memberMatcher.group(3));
                 result[memberXIndex - 1] = memberCoefficient;
             } else {
-                throw new IllegalStateException(errorMsg);
+                throw new IllegalStateException(TARGET_FUNCTION_FORMAT_ERR_MSG);
             }
         }
 
@@ -83,7 +83,7 @@ public class InputParsingUtils {
         return resultList.toArray(result);
     }
 
-    private static RestrictionEquation toRestrictionEquation(String restriction) {
+    private static RestrictionEquation toRestrictionEquation(final String restriction) {
         RestrictionEquation restrictionEquation = new RestrictionEquation();
 
         restrictionEquation.setFreeCoefficient(
@@ -98,31 +98,13 @@ public class InputParsingUtils {
         return restrictionEquation;
     }
 
-    private static Double[] transformToResultArray(final int vectorSize, final RestrictionEquation equation) {
-        Double[] equationResult = new Double[vectorSize + 2];
-        equationResult[0] = 0.0d;
-        equationResult[1] = equation.getFreeCoefficient();
-
-        for (EquationMember equationMember : equation.getEquationMembers()) {
-            equationResult[equationMember.getIndex() + 1] = equationMember.getCoefficient();
+    private static String getRestrictionPart(final String restriction, final int group) {
+        final Matcher restrictionMatcher =  Pattern.compile(RESTRICTION_PARTS_PARSE_REGEX).matcher(restriction);
+        if (restrictionMatcher.find()) {
+            return restrictionMatcher.group(group);
+        } else {
+            throw new IllegalStateException(RESTRICTION_FORMAT_ERR_MSG);
         }
-
-        for (int i = 0; i < equationResult.length; i++) {
-            if (null == equationResult[i]) {
-                equationResult[i] = DEFAULT_ABSENT_MEMBER_COEFFICIENT;
-            }
-        }
-        return equationResult;
-    }
-
-    private static int getVectorSizeByEquationsMaxIndex(final List<RestrictionEquation> restrictionEquations) {
-        int vectorSize = 0;
-        for (RestrictionEquation restrictionEquation : restrictionEquations) {
-            if (restrictionEquation.getMaxMemberIndex() > vectorSize) {
-                vectorSize = restrictionEquation.getMaxMemberIndex();
-            }
-        }
-        return vectorSize;
     }
 
     private static List<String> getEquationMemberCandidates(final String membersPartOfEquation) {
@@ -151,12 +133,31 @@ public class InputParsingUtils {
         return em;
     }
 
-    private static String getRestrictionPart(final String restriction, final int group) {
-        final Matcher restrictionMatcher =  Pattern.compile(RESTRICTION_PARTS_PARSE_REGEX).matcher(restriction);
-        if (restrictionMatcher.find()) {
-            return restrictionMatcher.group(group);
-        } else {
-            throw new IllegalStateException(RESTRICTION_FORMAT_ERR_MSG);
+    private static int getVectorSizeByEquationsMaxIndex(final List<RestrictionEquation> restrictionEquations) {
+        int vectorSize = 0;
+        for (RestrictionEquation restrictionEquation : restrictionEquations) {
+            if (restrictionEquation.getMaxMemberIndex() > vectorSize) {
+                vectorSize = restrictionEquation.getMaxMemberIndex();
+            }
         }
+        return vectorSize;
     }
+
+    private static Double[] transformToResultArray(final int vectorSize, final RestrictionEquation equation) {
+        Double[] equationResult = new Double[vectorSize + 2];
+        equationResult[0] = 0.0d;
+        equationResult[1] = equation.getFreeCoefficient();
+
+        for (EquationMember equationMember : equation.getEquationMembers()) {
+            equationResult[equationMember.getIndex() + 1] = equationMember.getCoefficient();
+        }
+
+        for (int i = 0; i < equationResult.length; i++) {
+            if (null == equationResult[i]) {
+                equationResult[i] = DEFAULT_ABSENT_MEMBER_COEFFICIENT;
+            }
+        }
+        return equationResult;
+    }
+
 }
