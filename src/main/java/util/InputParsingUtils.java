@@ -18,7 +18,7 @@ public class InputParsingUtils {
     private static final String OPTIONAL_NUMBER_REGEX = "(-?\\d?)";
     private static final String GREEDY_NUMBER_REGEX = "(\\d+)";
     private static final String EQUATION_MEMBER_REGEX = OPTIONAL_NUMBER_REGEX + "(x)" + GREEDY_NUMBER_REGEX;
-    private static final String EQUATION_MEMBER_PARSE_REGEX = "(-?\\d?\\.?\\d?)x([\\d+])";
+    private static final String EQUATION_MEMBER_PARSE_REGEX = "(-?\\d?\\.?\\d?)x(\\d+)";
     private static final String EQUATION_MEMBER_GET_REGEX = "(\\W?-?\\W?\\d?\\.?\\d?x\\d+)";
     private static final String RESTRICTION_PARTS_PARSE_REGEX = "(.*[^<>=])([<>=]+\\W?)(.*)";
 
