@@ -130,9 +130,11 @@ public class InputParsingUtils {
         if (memberParserMatcher.find()) {
             Double coefficient = DEFAULT_ABSENT_COEFFICIENT_FOR_MEMBER;
             if (!StringUtils.isEmpty(memberParserMatcher.group(1))) {
-                coefficient = Double.parseDouble(memberParserMatcher.group(1));
-            } else if (memberParserMatcher.group(1).equals(MINUS_ONE_COEFFICIENT_PATTERN)) {
-                coefficient = DEFAULT_NEGATIVE_ABSENT_COEFFICIENT_FOR_MEMBER;
+                if (memberParserMatcher.group(1).equals(MINUS_ONE_COEFFICIENT_PATTERN)) {
+                    coefficient = DEFAULT_NEGATIVE_ABSENT_COEFFICIENT_FOR_MEMBER;
+                } else {
+                    coefficient = Double.parseDouble(memberParserMatcher.group(1));
+                }
             }
             em = new EquationMember(coefficient, Integer.parseInt(memberParserMatcher.group(2)));
         } else {
