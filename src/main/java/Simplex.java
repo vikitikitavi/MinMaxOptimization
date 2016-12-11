@@ -69,18 +69,25 @@ public class Simplex {
 
         Double[] aimFunc = {7.0, 3.0};
 
-        String targetFunction = "x1 + 2x2 -> max";
-        Double[] asd = getTargetFunctionCoefitients(targetFunction);
-        List<String> restrictions = new ArrayList<String>(Arrays.asList(
-                "-2.3x1 + x2 <= 1",
-                "x1 - 6x2 <= 3",
-                "x1 + x2 <= 10",
-                "x2 <= 11",
-                "2x1 + x2 <= 32"
-        ));
+        String targetFunction = "7x1 + 3x2 -> max";
+        Double[] aimFuncParsed = getTargetFunctionCoefitients(targetFunction);
+//        List<String> restrictions = new ArrayList<String>(Arrays.asList(
+//                "-2.3x1 + x2 <= 1",
+//                "x1 - 6x2 <= 3",
+//                "x1 + x2 <= 10",
+//                "x2 <= 11",
+//                "2x1 + x2 <= 32"
+//        ));
 
         //Double[][] table ={{0.0, 54.0, 21.0, 4.0, 3.0},{0.0, 5.0, 76.0, 3.0, -7.0},{0.0, 65.0, 76.0, 32.0, 66.0},{0.0, 2.0, 43.0, 5.0, -100.0},{0.0, 0.0, 0.0, 0.0, 0.0}};
         Double[][] table = {{0.0,5.0,65.0,1.0},{0.0, 6.0, 7.0, 8.0},{0.0, 0.0, 0.0, 0.0}};
+
+        List<String> restrictions = new ArrayList<String>(Arrays.asList(
+                "65x1 + x2 <= 5",
+                "7x1 + 8x2 <= 6"
+        ));
+//        Double[][] tableParsed = getRestrictionElements(restrictions);
+
         LinkedList<String> eq = new LinkedList<String>();
         eq.add(">=");
         eq.add("<=");
