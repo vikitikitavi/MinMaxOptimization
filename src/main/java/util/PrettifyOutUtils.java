@@ -8,12 +8,17 @@ import de.vandermeer.asciitable.v2.themes.V2_E_TableThemes;
 import kurs.SimplexTable;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
+
+import static java.math.BigDecimal.ROUND_HALF_UP;
 
 /**
  * Created by imps on 011 11.12.16.
  */
 public class PrettifyOutUtils {
+
+    private static final int DEFAULT_FLOAT_SCALING_FACTOR = 3;
 
     public static void printSimplexTable(final SimplexTable simplexTable) {
         V2_AsciiTable at = new V2_AsciiTable();
@@ -55,10 +60,12 @@ public class PrettifyOutUtils {
             row.add(firstColumn);
             String Bx = simplexTable.basis[i];
             row.add(Bx);
-            String a0 = simplexTable.table[i][1].toString();
+            String a0 = new BigDecimal(simplexTable.table[i][1])
+                    .setScale(DEFAULT_FLOAT_SCALING_FACTOR, ROUND_HALF_UP).toString();
             row.add(a0);
             for (int j = 2; j < simplexTable.table[i].length; j++) {
-                row.add(simplexTable.table[i][j].toString());
+                row.add(new BigDecimal(simplexTable.table[i][j])
+                        .setScale(DEFAULT_FLOAT_SCALING_FACTOR, ROUND_HALF_UP).toString());
             }
             String[] rowArr = new String[row.size()];
             row.toArray(rowArr);
@@ -70,18 +77,23 @@ public class PrettifyOutUtils {
         deltaRow.add("");
         deltaRow.add("");
         for (int i = 1; i < headers.size() - 1; i++) {
-            String mPart = simplexTable.delta[1][i].toString().replace(".0","")+"M";
-            if (mPart.equals("0M")) {
+            String mPart = new BigDecimal(simplexTable.delta[1][i])
+                    .setScale(DEFAULT_FLOAT_SCALING_FACTOR, ROUND_HALF_UP).toString()+"M";
+            if (mPart.equals("0.000M")) {
                 mPart = "";
             }
-            String constPart = simplexTable.delta[0][i].toString().replace(".0","");
+            String constPart = new BigDecimal(simplexTable.delta[0][i])
+                    .setScale(DEFAULT_FLOAT_SCALING_FACTOR, ROUND_HALF_UP).toString();
 
-            if(!StringUtils.isEmpty(mPart) & constPart.equals("0")) {
-                deltaRow.add(mPart);
-            } else if (mPart.equals("0M") && constPart.equals("0")) {
+            if (constPart.equals("0.000")) {
+                constPart = "";
+            }
+            if(StringUtils.isEmpty(mPart) & StringUtils.isEmpty(constPart)) {
                 deltaRow.add("0");
+            } else if(StringUtils.isEmpty(mPart) || StringUtils.isEmpty(constPart)) {
+                deltaRow.add(mPart+constPart);
             } else {
-                deltaRow.add(mPart + " " + constPart);
+                deltaRow.add(mPart + " + " + constPart);
             }
 
         }
@@ -114,7 +126,9 @@ public class PrettifyOutUtils {
         List<String> values = new ArrayList<String>();
         for (String header : headers) {
             if (Arrays.asList(simplexTable.basis).contains(header)) {
-                values.add(simplexTable.table[Arrays.asList(simplexTable.basis).indexOf(header)][1].toString());
+                values.add(new BigDecimal(simplexTable.table[Arrays.asList(simplexTable.basis)
+                        .indexOf(header)][1])
+                        .setScale(DEFAULT_FLOAT_SCALING_FACTOR, ROUND_HALF_UP).toString());
             } else {
                 values.add("0");
             }
