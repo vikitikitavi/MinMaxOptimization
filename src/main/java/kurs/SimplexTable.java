@@ -9,9 +9,11 @@ public class SimplexTable {
     private LinkedList<String> valuesName;
     public Map<String, Double> aimFunk;
     public Double[][] delta;
+    private int maxOrMin = -1;
 
-    SimplexTable(Double[] aimFunction, Double[][] restrictionsCoefs, LinkedList<String> inequality) {
-        NormalView n = new NormalView(aimFunction, restrictionsCoefs, inequality);
+    SimplexTable(Double[] aimFunction, Double[][] restrictionsCoefs, LinkedList<String> inequality, int maxOrMin) {
+        this.maxOrMin = maxOrMin;
+        NormalViewRestrictions n = new NormalViewRestrictions(aimFunction, restrictionsCoefs, inequality, maxOrMin);
         table = n.getNormalRestrictionsCoefs();
         basis = n.getBasis();
         valuesName = n.getVariables();
@@ -50,7 +52,7 @@ public class SimplexTable {
         String mainColumn = "";
         for (int column = 2; column < delta[0].length; column++)
             if (((minDelta[0] > delta[0][column]) && (minDelta[1] >= delta[1][column]))
-                    || ((minDelta[0] == delta[0][column]) && (minDelta[1] > delta[1][column]))
+                    || ((minDelta[0].equals(delta[0][column])) && (minDelta[1] > delta[1][column]))
                     || ((minDelta[0] < delta[0][column]) && (minDelta[1] > delta[1][column]))) {
                 minDelta[0] = delta[0][column];
                 minDelta[1] = delta[1][column];
@@ -77,8 +79,8 @@ public class SimplexTable {
         String mainColumn = "";
         for (int column = 2; column < delta[0].length; column++)
             if (((minDelta[0] < delta[0][column]) && (minDelta[1] <= delta[1][column]))
-                    || ((minDelta[0] == delta[0][column]) && (minDelta[1] < delta[1][column]))
-                    || ((minDelta[0] < delta[0][column]) && (minDelta[1] < delta[1][column]))) {
+                    || ((minDelta[0].equals(delta[0][column])) && (minDelta[1] < delta[1][column]))
+                    || ((minDelta[0] > delta[0][column]) && (minDelta[1] < delta[1][column]))) {
                 minDelta[0] = delta[0][column];
                 minDelta[1] = delta[1][column];
                 mainColumn = valuesName.get(column);
@@ -94,21 +96,24 @@ public class SimplexTable {
         // подсчет оценок отдельным масивом
         for (int column = 1; column < delta[0].length; column++) {
             for (int string = 0; string < table.length - 1; string++) {
-                if (table[string][0] == Double.MIN_VALUE)
-                    delta[1][column] = delta[1][column] - table[string][column];
+                if ((table[string][0] == Double.MAX_VALUE) || (table[string][0] == Double.MIN_VALUE))
+                    delta[1][column] = delta[1][column] + maxOrMin * table[string][column];
                 else delta[0][column] = delta[0][column] + table[string][column] * table[string][0];
             }
             if (aimFunk.get(valuesName.get(column)) == Double.MIN_VALUE)
-                delta[1][column] -= -1;
+                delta[1][column] -= maxOrMin;
+            else if (aimFunk.get(valuesName.get(column)) == Double.MAX_VALUE)
+                delta[1][column] -= maxOrMin;
             else delta[0][column] -= aimFunk.get(valuesName.get(column));
         }
+    }
+
+    public void setMaxOrMin(int maxOrMin) {
+        this.maxOrMin = maxOrMin;
     }
 
     public LinkedList<String> getValuesName() {
         return new LinkedList<String>(valuesName);
     }
 
-    //    public void setMaxOrMin(int maxOrMin){
-//        this.maxOrMin = maxOrMin;
-//    }
 }
