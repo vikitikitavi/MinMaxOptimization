@@ -16,8 +16,8 @@ public class InputParsingUtils {
     private static final String TARGET_FUNCTION_FORMAT_ERR_MSG =
             "Wrong input, please use 'Ax1 +/- Bx2 +/- ... +/- NxN -> max' format";
 
-    private static final String EQUATION_MEMBER_PARSE_REGEX = "(-?\\d*\\.?\\d*)x(\\d+)";
-    private static final String EQUATION_MEMBER_GET_REGEX = "(\\W*-?\\W*\\d*\\.?\\d*x\\d+)";
+    private static final String EQUATION_MEMBER_PARSE_REGEX = "(-?\\d*\\.?\\d*E*[-+]*\\d?)x(\\d+)";
+    private static final String EQUATION_MEMBER_GET_REGEX = "(\\W*-?\\W*\\d*\\.?\\d*E*[-+]*\\d?x\\d+)";
     private static final String RESTRICTION_PARTS_PARSE_REGEX = "(.*[^<>=])([<>=]+\\W?)(.*)";
     private static final String TARGET_FUNCTION_PARTS_PARSE_REGEX = "(.*)\\W?->\\W?.*";
     private static final String MINUS_ONE_COEFFICIENT_PATTERN = "-";
