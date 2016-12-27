@@ -20,6 +20,7 @@ public class SimplexMaxMin {
             printSimplexTable(simple);
         }
         printTableVariableValues(simple);
+        System.out.println("max = " + simple.delta[0][1]);
         return simple.delta[0][1];
     }
 
@@ -35,7 +36,10 @@ public class SimplexMaxMin {
             printSimplexTable(simple);
         }
         printTableVariableValues(simple);
+        System.out.println("min = " + simple.delta[0][1]);
         return simple.delta[0][1];
     }
+
+
 
 }

@@ -19,12 +19,17 @@ public class MultiTask {
         Double[] aimFuncParsed = getTargetFunctionCoefficients(targetFunction);
         Double[][] tableParsed = getRestrictionElements(restrictions);
         LinkedList<String> eq = getInEqualityStates(restrictions);
-
-
+        String out = "F = " + aimFuncParsed[0].toString() + "x1";
+        for(int index = 1; index < aimFuncParsed.length; index++)
+            out+= " + "+aimFuncParsed[0].toString() + "x" + (index + 1);
+            System.out.println(out);
+        for(int index = 0; index < restrictions.size(); index++)
+            System.out.println(restrictions.get(index));
+        System.out.println();
         Double max = SimplexMaxMin.findMax(aimFuncParsed, tableParsed, eq);
+
         Double min = SimplexMaxMin.findMin(aimFuncParsed, tableParsed, eq);
-        System.out.println(min);
-        System.out.println(max);
+
         String newRestriction = WEIGHT_COFFITIENT * (aimFuncParsed[0])/(max - min) + "x" + 1;
         for(int index = 1; index < aimFuncParsed.length; index++)
             newRestriction += " + "+ WEIGHT_COFFITIENT * (aimFuncParsed[index])/(max - min) + "x" + (index + 1);
@@ -56,7 +61,10 @@ public class MultiTask {
         Double[] aimFuncParsed = getTargetFunctionCoefficients(target);
         Double[][] tableParsed = getRestrictionElements(restrictionsForTarget);
         LinkedList<String> eq = getInEqualityStates(restrictionsForTarget);
-        System.out.println(SimplexMaxMin.findMin(aimFuncParsed,tableParsed,eq));
+        System.out.println("F = x"+ kIndex +" -> min");
+        for(int index = 0; index < restrictionsForTarget.size(); index++)
+            System.out.println(restrictionsForTarget.get(index));
+        System.out.println("K0 = " + SimplexMaxMin.findMin(aimFuncParsed,tableParsed,eq));
 
     }
 }

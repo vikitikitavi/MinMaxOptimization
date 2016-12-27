@@ -33,11 +33,17 @@ public class LamdaTask {
         Double[][] tableParsed = getRestrictionElements(restrictions);
         LinkedList<String> eq = getInEqualityStates(restrictions);
 
+        String out = "F = " + aimFuncParsed[0].toString() + "x1";
+        for(int index = 1; index < aimFuncParsed.length; index++)
+            out+= " + "+aimFuncParsed[0].toString() + "x" + (index + 1);
+        System.out.println(out);
+        for(int index = 0; index < restrictions.size(); index++)
+            System.out.println(restrictions.get(index));
 
         Double max = SimplexMaxMin.findMax(aimFuncParsed, tableParsed, eq);
         Double min = SimplexMaxMin.findMin(aimFuncParsed, tableParsed, eq);
-        System.out.println(min);
-        System.out.println(max);
+//        System.out.println(min);
+//        System.out.println(max);
 
         String newRestriction = new String();
 
@@ -65,7 +71,11 @@ public class LamdaTask {
         Double[] aimFuncParsed = getTargetFunctionCoefficients(LAMBDA);
         Double[][] tableParsed = getRestrictionElements(lambdaRestrictions);
         LinkedList<String> eq = getInEqualityStates(lambdaRestrictions);
-        SimplexMaxMin.findMax(aimFuncParsed, tableParsed, eq);
+        System.out.println("F = LAMBDA -> min");
+        for(int index = 0; index < lambdaRestrictions.size(); index++)
+            System.out.println(lambdaRestrictions.get(index));
+        System.out.println("LAMBDA = " + SimplexMaxMin.findMax(aimFuncParsed, tableParsed, eq));
+
         System.out.println(lambdaRestrictions);
     }
 }
