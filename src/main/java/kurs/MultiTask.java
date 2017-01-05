@@ -12,8 +12,12 @@ import static util.InputParsingUtils.getTargetFunctionCoefficients;
  * Created by tori on 011 11.12.16.
  */
 public class MultiTask {
-    static final Double WEIGHT_COFFITIENT = 0.5;
+      Double WEIGHT_COFFITIENT = 0.5;
     static int kIndex;
+    public  void setWeightCoffitient(double weightCoffitient){
+        WEIGHT_COFFITIENT = weightCoffitient;
+    }
+
     private String newRestriction(String targetFunction, List<String> restrictions){
         kIndex = 0;
         Double[] aimFuncParsed = getTargetFunctionCoefficients(targetFunction);
@@ -21,7 +25,7 @@ public class MultiTask {
         LinkedList<String> eq = getInEqualityStates(restrictions);
         String out = "F = " + aimFuncParsed[0].toString() + "x1";
         for(int index = 1; index < aimFuncParsed.length; index++)
-            out+= " + "+aimFuncParsed[0].toString() + "x" + (index + 1);
+            out+= " + "+aimFuncParsed[index].toString() + "x" + (index + 1);
             System.out.println(out);
         for(int index = 0; index < restrictions.size(); index++)
             System.out.println(restrictions.get(index));
@@ -36,12 +40,14 @@ public class MultiTask {
         if((aimFuncParsed.length + 1) > kIndex)
             kIndex = aimFuncParsed.length + 1;
         newRestriction+= " + x" + kIndex + " >= " + WEIGHT_COFFITIENT * max/(max - min);
+
         return newRestriction;
     }
 
     private List<String> restrictionsForK(String firstTargetFunction, String secondTargetFunctions, List<String> restrictions){
         List<String> result = new ArrayList<String>();
         String first = newRestriction(firstTargetFunction, restrictions);
+        setWeightCoffitient(1-WEIGHT_COFFITIENT);
         String second = newRestriction(secondTargetFunctions, restrictions);
         for(int index=0; index < restrictions.size(); index++)
             result.add(restrictions.get(index));

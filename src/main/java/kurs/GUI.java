@@ -45,6 +45,9 @@ public class GUI extends JFrame {
     private JTextField B3T1 = new JTextField("", 2);
     private JTextField B3T2 = new JTextField("", 2);
     private JTextField B3T3 = new JTextField("", 2);
+    private JRadioButton pes = new JRadioButton("pesimist");
+    private JRadioButton opt = new JRadioButton("optimist");
+    private JTextField weigt = new JTextField("0.5", 2);
 
     public GUI() {
         super("Simple Example");
@@ -117,6 +120,9 @@ public class GUI extends JFrame {
         container.add(new Label("Alfa"));
         container.add(alfa);
         container.add(button);
+        container.add(pes);
+        container.add(opt);
+        container.add(weigt);
         button.addActionListener(new ButtonEventListener());
 
 
@@ -125,7 +131,7 @@ public class GUI extends JFrame {
     class ButtonEventListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             String targetFunction = "0x1+0x2+0x3+0x4+0x5+0x6+1x7+1x8+1x9 -> max";
-            String StargetFunction = "-x1-x2-x3-3x4-3X5-3x6+0x7+0x8+0x9 -> max";
+            String StargetFunction = "-x1-x2-x3-3x4-3x5-3x6+0x7+0x8+0x9 -> max";
 
             java.util.List<String> restrictions = new ArrayList<String>(Arrays.asList(
                     new String( c11.getText() + "x1 + " + c21.getText() + "x2 + " + c31.getText() +"x3 + " + c12.getText()
@@ -143,21 +149,26 @@ public class GUI extends JFrame {
                     new String("x1 + x2 + x3 + 0x4 + 0x5 + 0x6 + 0x7 + 0x8 + 0x9 <= " + T1.getText()),
                     new String("0x1 + 0x2 + 0x3 + x4 + x5 + x6 + 0x7 + 0x8 + 0x9 <= " + T2.getText())
             ));
-            (new MultiTask()).multiTaskResult(targetFunction,StargetFunction,restrictions);
-            //new LamdaTask(coefficients, restrictions);
-            System.out.println(restrictions);
 
-            String message = "";
-            message += "Button was pressed\n";
-            message += "Text is " + input.getText() + "\n";
-            message += (radio1.isSelected() ? "Radio #1" : "Radio #2")
-                    + " is selected\n";
-            message += "CheckBox is " + ((check.isSelected())
-                    ? "checked" : "unchecked");
-            JOptionPane.showMessageDialog(null,
-                    message,
-                    "Output",
-                    JOptionPane.PLAIN_MESSAGE);
+
+            MultiTask task = new MultiTask();
+            task.setWeightCoffitient(Double.parseDouble(weigt.getText()));
+            if(pes.isSelected())
+                task.multiTaskResult(targetFunction,StargetFunction,Lamda.newRestrictionPesimistics(restrictions,Double.parseDouble(alfa.getText())));
+            else if (opt.isSelected())task.multiTaskResult(targetFunction,StargetFunction,Lamda.newRestrictionOptimistic(restrictions,Double.parseDouble(alfa.getText())));
+            else task.multiTaskResult(targetFunction,StargetFunction,restrictions);
+            Double[] result = SimplexMaxMin.result;
+
+            B1T1.setText(((Long)Math.round(result[0])).toString());
+            B2T1.setText(((Long)Math.round(result[1])).toString());
+            B3T1.setText(((Long)Math.round(result[2])).toString());
+            B1T2.setText(((Long)Math.round(result[3])).toString());
+            B2T2.setText(((Long)Math.round(result[4])).toString());
+            B3T2.setText(((Long)Math.round(result[5])).toString());
+            B1T3.setText(((Long)Math.round(result[6])).toString());
+            B2T3.setText(((Long)Math.round(result[7])).toString());
+            B3T3.setText(((Long)Math.round(result[8])).toString());
+
         }
     }
 }

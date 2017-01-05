@@ -53,12 +53,17 @@ public class NormalViewRestrictions {
     private void setNormalRestrictionsCoefs() {
 
         int oneMoreVariable = 0;
+        int minusOneFreeVariable = 0;
         for (String element : inequality) {
             if (element.equals(">="))
                 oneMoreVariable++;
+            else if (element.equals("=")) {
+                oneMoreVariable++;
+                minusOneFreeVariable--;
+            }
         }
 
-        normalRestrictionsCoefs = new Double[restrictionsCoefs.length][restrictionsCoefs[0].length + restrictionsCoefs.length + oneMoreVariable - 1];
+        normalRestrictionsCoefs = new Double[restrictionsCoefs.length][restrictionsCoefs[0].length + restrictionsCoefs.length + minusOneFreeVariable+ oneMoreVariable - 1];
         for (int column = 0; column < restrictionsCoefs[0].length; column++)
             for (int string = 0; string < restrictionsCoefs.length; string++)
                 normalRestrictionsCoefs[string][column] = restrictionsCoefs[string][column];
@@ -75,29 +80,43 @@ public class NormalViewRestrictions {
                 column++;
                 for (int string = 0; string < normalRestrictionsCoefs.length; string++)
                     if (string == index) {
-                    if(maxOrMin == -1){
-                        normalRestrictionsCoefs[string][column] = 1.0;
-                        basis.add("-M" + (column - 1));
-                        variables.add("-M" + (column - 1));
-                        normalAimFunction.put("-M" + (column - 1), Double.MIN_VALUE);
-                    }
-                    else {
-                        normalRestrictionsCoefs[string][column] = 1.0;
-                        basis.add("M" + (column - 1));
-                        variables.add("M" + (column - 1));
-                        normalAimFunction.put("M" + (column - 1), Double.MAX_VALUE);
-                    }
+                        if (maxOrMin == -1) {
+                            normalRestrictionsCoefs[string][column] = 1.0;
+                            basis.add("-M" + (column - 1));
+                            variables.add("-M" + (column - 1));
+                            normalAimFunction.put("-M" + (column - 1), Double.MIN_VALUE);
+                        } else {
+                            normalRestrictionsCoefs[string][column] = 1.0;
+                            basis.add("M" + (column - 1));
+                            variables.add("M" + (column - 1));
+                            normalAimFunction.put("M" + (column - 1), Double.MAX_VALUE);
+                        }
                     } else normalRestrictionsCoefs[string][column] = 0.0;
 
 
-            } else for (int string = 0; string < normalRestrictionsCoefs.length; string++)
-                if (index == string) {
-                    normalRestrictionsCoefs[string][column] = 1.0;
-                    basis.add("x" + (column - 1));
-                    variables.add("x" + (column - 1));
-                    normalAimFunction.put("x" + (column - 1), 0.0);
-                } else normalRestrictionsCoefs[string][column] = 0.0;
-
+            } else if (inequality.get(index).equals("<=")) {
+                for (int string = 0; string < normalRestrictionsCoefs.length; string++)
+                    if (index == string) {
+                        normalRestrictionsCoefs[string][column] = 1.0;
+                        basis.add("x" + (column - 1));
+                        variables.add("x" + (column - 1));
+                        normalAimFunction.put("x" + (column - 1), 0.0);
+                    } else normalRestrictionsCoefs[string][column] = 0.0;
+            } else if(inequality.get(index).equals("="))
+                for (int string = 0; string < normalRestrictionsCoefs.length; string++)
+                    if (string == index) {
+                        if (maxOrMin == -1) {
+                            normalRestrictionsCoefs[string][column] = 1.0;
+                            basis.add("-M" + (column - 1));
+                            variables.add("-M" + (column - 1));
+                            normalAimFunction.put("-M" + (column - 1), Double.MIN_VALUE);
+                        } else {
+                            normalRestrictionsCoefs[string][column] = 1.0;
+                            basis.add("M" + (column - 1));
+                            variables.add("M" + (column - 1));
+                            normalAimFunction.put("M" + (column - 1), Double.MAX_VALUE);
+                        }
+                    } else normalRestrictionsCoefs[string][column] = 0.0;
             column++;
 
         }
